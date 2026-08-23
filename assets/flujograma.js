@@ -1045,9 +1045,9 @@
       '    <div class="fj-fila-av">' + av.map(function (a) { return '<span class="fj-av">' + esc(a) + '</span>'; }).join('') + '</div>' +
       '  </div>' +
       '  <div class="fj-fila-acc">' +
-      '    <button type="button" class="fj-mini" data-sube="' + ruta + '" aria-label="Subir">↑</button>' +
-      '    <button type="button" class="fj-mini" data-baja="' + ruta + '" aria-label="Bajar">↓</button>' +
-      '    <button type="button" class="fj-mini fj-mini-del" data-quita="' + ruta + '" aria-label="Quitar">×</button>' +
+      '    <button type="button" class="fj-mini" data-sube="' + ruta + '" data-tip="Subir" aria-label="Subir este paso">↑</button>' +
+      '    <button type="button" class="fj-mini" data-baja="' + ruta + '" data-tip="Bajar" aria-label="Bajar este paso">↓</button>' +
+      '    <button type="button" class="fj-mini fj-mini-del" data-quita="' + ruta + '" data-tip="Quitar" aria-label="Quitar este paso">×</button>' +
       '  </div>' +
       '</div>';
 

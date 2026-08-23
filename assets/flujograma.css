@@ -1235,6 +1235,53 @@
 #flujograma-app .fj-mini:hover { background: var(--fj-bor-2); color: var(--fj-navy); }
 #flujograma-app .fj-mini-del:hover { background: var(--fj-rojo-bg); color: var(--fj-rojo); }
 
+/* Etiqueta al pasar el cursor. Las flechas y la equis por si solas no dicen
+   que hacen; el `title` del navegador tarda casi un segundo en salir, asi que
+   se dibuja aqui. Se despliega hacia la izquierda para no salirse de la
+   columna, y tambien aparece al llegar con el teclado. */
+#flujograma-app .fj-mini { position: relative; }
+
+#flujograma-app .fj-mini::after {
+  content: attr(data-tip);
+  position: absolute;
+  right: calc(100% + 7px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  padding: 4px 8px;
+  background: var(--fj-navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.3;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+/* Cada estado va en su propia regla y no en una lista separada por comas: si
+   algun navegador no reconociera :focus-visible descartaria la lista entera y
+   el globo tampoco apareceria al pasar el cursor. Es defensivo, no un arreglo.
+   Se usa solo `opacity` con `pointer-events:none`, sin `visibility`: hace lo
+   mismo con una propiedad menos. */
+#flujograma-app .fj-mini:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+#flujograma-app .fj-mini:focus-visible::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+#flujograma-app .fj-mini-del::after { background: var(--fj-rojo); }
+
+@media (prefers-reduced-motion: reduce) {
+  #flujograma-app .fj-mini::after { transition: none; }
+}
+
 /* --- Ramas de una decision ------------------------------------------------ */
 
 /* Las dos ramas van una encima de otra, no en columnas. En cuanto hay dos
