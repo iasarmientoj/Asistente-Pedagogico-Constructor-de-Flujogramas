@@ -18,7 +18,7 @@
   var VERSION = '1.0.0';
   var RAIZ_ID = 'flujograma-app';
   var LS_KEY = 'siepsi_flujograma_v1';
-  var URL_BLOG = 'https://siepsi.com.co/herramientas-academicas/diagrama-de-flujo/';
+  var URL_BLOG = 'https://siepsi.com.co/herramientas-academicas/diagrama-de-flujo-o-flujograma/';
   var CREDITO = 'Creado con el Asistente Pedagógico de Flujogramas · Semillero de Investigación SIEPSI · siepsi.com.co';
 
   var MAX_PASOS = 40;      /* tope total de simbolos, por legibilidad */
@@ -94,23 +94,32 @@
 
   var EJEMPLOS = {
     guia: {
-      nom: 'Cómo hacer un diagrama de flujo',
-      desc: 'El ejemplo de la guía: el proceso de construir un flujograma.',
+      nom: 'Elaborar un diagrama de flujo',
+      desc: 'El ejemplo publicado en la guía del semillero.',
+      /* Transcrito de la figura de la guía. Cada verificación deja la rama «Sí»
+         vacía —es decir, sigue por el eje— y manda la corrección por «No». */
       datos: {
-        titulo: 'Cómo hacer un diagrama de flujo', autor: '',
-        inicio: 'Inicio', fin: 'Fin',
+        titulo: 'Elaborar un diagrama de flujo', autor: '',
+        inicio: 'Elaborar un diagrama de flujo', fin: 'Diagrama de flujo completado',
         pasos: [
-          { t: 'proceso', x: 'Listar las actividades del proceso' },
-          { t: 'proceso', x: 'Establecer el inicio y el fin' },
-          { t: 'proceso', x: 'Identificar las decisiones del proceso' },
-          { t: 'entrada', x: 'Agentes e información adicional' },
-          { t: 'proceso', x: 'Definir los símbolos a utilizar' },
-          { t: 'proceso', x: 'Conectar los símbolos con flechas' },
-          {
-            t: 'decision', x: '¿Se lee de arriba abajo y de izquierda a derecha?',
-            si: [{ t: 'salida', x: 'Diagrama terminado' }],
-            no: [{ t: 'proceso', x: 'Reorganizar los símbolos' }]
-          }
+          { t: 'decision', x: '¿Se cuenta con toda la información necesaria para hacer el diagrama?',
+            si: [], no: [{ t: 'proceso', x: 'Listar la información que se tiene y la que falta' }] },
+          { t: 'proceso', x: 'Organizar la información sobre el proceso según sus fases' },
+          { t: 'decision', x: '¿Se tienen establecidos los símbolos que se usarán?',
+            si: [], no: [{ t: 'proceso', x: 'Remitirse a la tabla de símbolos' }] },
+          { t: 'proceso', x: 'Organizar la información resumida en los diferentes símbolos' },
+          { t: 'decision', x: '¿Se ubicaron el inicio y el fin en óvalos?',
+            si: [], no: [{ t: 'proceso', x: 'Utilizar óvalos para el inicio y el fin' }] },
+          { t: 'decision', x: '¿Se plantearon las fases en forma de cuadro?',
+            si: [], no: [{ t: 'proceso', x: 'Organizar los pasos del proceso en cuadros' }] },
+          { t: 'decision', x: '¿Se plantearon las decisiones en forma de rombo?',
+            si: [], no: [{ t: 'proceso', x: 'Utilizar rombos para las decisiones' }] },
+          { t: 'decision', x: '¿Se utilizaron flechas para representar la dirección?',
+            si: [], no: [{ t: 'proceso', x: 'Unir las formas con flechas' }] },
+          { t: 'decision', x: '¿La información dentro de las formas es concisa pero suficiente?',
+            si: [], no: [{ t: 'proceso', x: 'Añadir información corta pero suficiente' }] },
+          { t: 'decision', x: '¿Se revisó que no quedaran formas desconectadas?',
+            si: [], no: [{ t: 'proceso', x: 'Unir las formas que quedaron sueltas' }] }
         ]
       }
     },
@@ -340,7 +349,7 @@
       a.push('Escribe el texto de este símbolo.');
       return a;
     }
-    if (p.length > 8) {
+    if (p.length > (n.t === 'decision' ? 12 : 8)) {
       a.push('No escribas párrafos: el texto debe ser corto y suficiente.');
     }
     if (n.t === 'decision') {
@@ -372,13 +381,13 @@
       var p = palabras(n.x);
       palabrasTot += p.length;
       if (!p.length) { vacios++; return; }
-      if (p.length > 8) largos++;
+      if (p.length > (n.t === 'decision' ? 12 : 8)) largos++;
       if (p.length < 2 && n.t !== 'conector' && n.t !== 'fin') cortos++;
       if (n.t === 'fin') finesAlternativos++;
       if (n.t === 'decision') {
         decisiones++;
         if (!esPregunta(n.x)) decSinPregunta++;
-        if (!(n.si || []).length || !(n.no || []).length) ramasVacias++;
+        if (!(n.si || []).length && !(n.no || []).length) ramasVacias++;
       } else if (n.t === 'proceso' && !empiezaConVerbo(n.x)) {
         sinVerbo++;
       }
@@ -395,7 +404,7 @@
     else sug.push(['secuencia', 'No hay ninguna decisión. Un flujograma se usa justamente para mostrar los puntos donde el proceso se bifurca; si el tuyo no tiene ninguno, revisa si de verdad necesitas un diagrama.']);
 
     if (!ramasVacias) sec += 15;
-    else sug.push(['secuencia', ramasVacias + ' decisión(es) tienen una rama vacía. Toda pregunta debe decir qué pasa con cada respuesta.']);
+    else sug.push(['secuencia', ramasVacias + ' decisión(es) no llevan a ninguna parte: sus dos respuestas están vacías. Define al menos una.']);
 
     if (!vacios) sec += 10;
     else sug.push(['secuencia', 'Hay ' + vacios + ' símbolo(s) sin texto. Un símbolo vacío rompe la lectura del proceso.']);
@@ -534,15 +543,25 @@
       return { tipo: 'simple', n: n, m: m, alto: m.h, izq: m.w / 2, der: m.w / 2 };
     }
     var mSi = medirSec(n.si), mNo = medirSec(n.no);
-    var sepIzq = m.w / 2 + GAP_RAMA + (mSi.der || 30);
-    var sepDer = m.w / 2 + GAP_RAMA + (mNo.izq || 30);
+    var vacSi = !(n.si || []).length, vacNo = !(n.no || []).length;
+
+    /* Convencion del ejemplo de la guia: la respuesta que continua el proceso
+       baja por el eje y la que se desvia sale a un lado. Si una rama esta
+       vacia significa justamente «sigue derecho», asi que no se desvia. */
+    var ambasVacias = vacSi && vacNo;
+    var rectoSi = ambasVacias || (vacSi && !vacNo);
+    var rectoNo = !ambasVacias && vacNo && !vacSi;
+
+    var sepIzq = (rectoSi || ambasVacias) ? 0 : m.w / 2 + GAP_RAMA + (mSi.der || 30);
+    var sepDer = (rectoNo || ambasVacias) ? 0 : m.w / 2 + GAP_RAMA + (mNo.izq || 30);
     var altoRamas = Math.max(mSi.alto, mNo.alto);
     return {
       tipo: 'decision', n: n, m: m,
       mSi: mSi, mNo: mNo, sepIzq: sepIzq, sepDer: sepDer, altoRamas: altoRamas,
-      alto: m.h + GAP_V + altoRamas + GAP_UNION,
-      izq: Math.max(m.w / 2, sepIzq + (mSi.izq || 20)),
-      der: Math.max(m.w / 2, sepDer + (mNo.der || 20))
+      rectoSi: rectoSi, rectoNo: rectoNo, ambasVacias: ambasVacias,
+      alto: ambasVacias ? m.h : m.h + GAP_V + altoRamas + GAP_UNION,
+      izq: (rectoSi || ambasVacias) ? m.w / 2 : Math.max(m.w / 2, sepIzq + (mSi.izq || 20)),
+      der: (rectoNo || ambasVacias) ? m.w / 2 : Math.max(m.w / 2, sepDer + (mNo.der || 20))
     };
   }
 
@@ -650,30 +669,47 @@
     var cyR = y + m.h / 2;
     var yRamas = y + m.h + GAP_V;
     var yUnion = y + b.alto;
-    var xSi = cx - b.sepIzq, xNo = cx + b.sepDer;
+    var xSi = b.rectoSi ? cx : cx - b.sepIzq;
+    var xNo = b.rectoNo ? cx : cx + b.sepDer;
 
-    /* salidas laterales del rombo */
-    _g += linea(cx - m.w / 2, cyR, xSi, cyR, _T, false);
-    _g += linea(xSi, cyR, xSi, yRamas, _T, true);
-    _g += etiqueta((cx - m.w / 2 + xSi) / 2, cyR - 8, 'Sí', _T);
+    /* Sin ninguna rama definida, el rombo se comporta como un simbolo mas de
+       la secuencia: la flecha normal al siguiente paso ya lo conecta. */
+    if (b.ambasVacias) return { yFin: y + m.h, cortado: false };
 
-    _g += linea(cx + m.w / 2, cyR, xNo, cyR, _T, false);
-    _g += linea(xNo, cyR, xNo, yRamas, _T, true);
-    _g += etiqueta((cx + m.w / 2 + xNo) / 2, cyR - 8, 'No', _T);
+    {
+      if (b.rectoSi) {
+        _g += linea(cx, y + m.h, cx, yRamas, _T, false);
+        _g += etiqueta(cx + 16, y + m.h + 18, 'Sí', _T);
+      } else {
+        _g += linea(cx - m.w / 2, cyR, xSi, cyR, _T, false);
+        _g += linea(xSi, cyR, xSi, yRamas, _T, true);
+        _g += etiqueta((cx - m.w / 2 + xSi) / 2, cyR - 8, 'Sí', _T);
+      }
+      if (b.rectoNo) {
+        _g += linea(cx, y + m.h, cx, yRamas, _T, false);
+        _g += etiqueta(cx + 16, y + m.h + 18, 'No', _T);
+      } else {
+        _g += linea(cx + m.w / 2, cyR, xNo, cyR, _T, false);
+        _g += linea(xNo, cyR, xNo, yRamas, _T, true);
+        _g += etiqueta((cx + m.w / 2 + xNo) / 2, cyR - 8, 'No', _T);
+      }
+    }
 
     marcaX(xSi); marcaX(xNo);
 
     var rSi = emitirSec(b.n.si, b.mSi, xSi, yRamas);
     var rNo = emitirSec(b.n.no, b.mNo, xNo, yRamas);
 
-    /* vuelta al eje: solo las ramas que no terminaron en un fin alternativo */
+    /* vuelta al eje: solo las ramas que no terminaron en un fin alternativo.
+       El tramo horizontal se omite cuando la rama ya baja por el propio eje,
+       porque seria una linea de longitud cero. */
     if (!rSi.cortado) {
       _g += linea(xSi, rSi.yFin, xSi, yUnion, _T, false);
-      _g += linea(xSi, yUnion, cx, yUnion, _T, false);
+      if (Math.abs(xSi - cx) > 0.5) _g += linea(xSi, yUnion, cx, yUnion, _T, false);
     }
     if (!rNo.cortado) {
       _g += linea(xNo, rNo.yFin, xNo, yUnion, _T, false);
-      _g += linea(xNo, yUnion, cx, yUnion, _T, false);
+      if (Math.abs(xNo - cx) > 0.5) _g += linea(xNo, yUnion, cx, yUnion, _T, false);
     }
 
     return { yFin: yUnion, cortado: rSi.cortado && rNo.cortado };

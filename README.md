@@ -142,8 +142,10 @@ Recuerda crear las **dimensiones personalizadas** para `formato`, `etapa` y
 
 ## Límites conocidos
 
-1. **Sin bucles.** No se puede volver a un paso anterior («repetir hasta que…»).
-   El símbolo *Conector* sirve como salida provisional para indicarlo.
+1. **Sin retornos.** El flujo siempre avanza hacia abajo; no se puede volver a
+   un paso anterior. La guía del semillero **no describe retornos** y sus
+   figuras tampoco los usan, así que no es una carencia frente al material.
+   Si algún día hicieran falta, el símbolo *Conector* sirve de salida.
 2. **Decisiones de dos salidas.** No hay ramas triples.
 3. **Máximo 40 símbolos y 3 niveles** de decisión anidada, por legibilidad.
 4. **Sin carriles por responsable.** La guía menciona «agentes y sus
@@ -156,9 +158,8 @@ Recuerda crear las **dimensiones personalizadas** para `formato`, `etapa` y
 
 ## Pendiente de material del semillero
 
-- La **página del blog** de diagrama de flujo: la URL en `URL_BLOG` es una
-  suposición (`/herramientas-academicas/diagrama-de-flujo/`). Hay que ponerla
-  real antes de publicar.
+- Ya está puesta la URL real del blog:
+  `/herramientas-academicas/diagrama-de-flujo-o-flujograma/`.
 - La **solución del ejercicio** está hoy en un enlace de Miro que exige cuenta y
   puede caducar. Si se pasa el contenido, se carga como ejemplo dentro de la
   herramienta y el ejercicio deja de depender de un servicio externo.

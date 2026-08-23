@@ -1237,19 +1237,23 @@
 
 /* --- Ramas de una decision ------------------------------------------------ */
 
+/* Las dos ramas van una encima de otra, no en columnas. En cuanto hay dos
+   niveles de decision las columnas quedan de unos 100 px y no se puede
+   escribir; apiladas conservan el ancho completo a cualquier profundidad.
+   La distincion la hacen el filete lateral y el color de la etiqueta. */
 #flujograma-app .fj-ramas {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: -2px 0 4px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: -2px 0 4px 22px;
 }
 
 #flujograma-app .fj-rama {
   border: 1px solid var(--fj-linea);
-  border-top: 2px solid var(--fj-verde);
+  border-left: 3px solid var(--fj-verde);
   background: var(--fj-hueso);
 }
-#flujograma-app .fj-rama:last-child { border-top-color: #d9736a; }
+#flujograma-app .fj-rama + .fj-rama { border-left-color: #d9736a; }
 
 #flujograma-app .fj-rama-cab { padding: 7px 11px 0; }
 #flujograma-app .fj-rama-et {
@@ -1257,13 +1261,13 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: var(--fj-txt-3);
+  color: var(--fj-verde-o);
 }
+#flujograma-app .fj-rama + .fj-rama .fj-rama-et { color: #b3261e; }
 #flujograma-app .fj-rama-cuerpo { padding: 8px 11px 11px; display: flex; flex-direction: column; gap: 7px; }
 #flujograma-app .fj-rama-cuerpo > .fj-btn { align-self: flex-start; }
 #flujograma-app .fj-rama-vacia { font-size: 12px; line-height: 1.5; color: var(--fj-txt-3); }
-#flujograma-app .fj-rama .fj-tipo { width: 112px; }
-#flujograma-app .fj-rama .fj-ramas { grid-template-columns: 1fr; margin-left: 14px; }
+#flujograma-app .fj-rama .fj-ramas { margin-left: 16px; }
 
 #flujograma-app .fj-esquema-pie {
   display: flex;
@@ -1277,7 +1281,6 @@
 #flujograma-app .fj-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
 @media (max-width: 760px) {
-  #flujograma-app .fj-ramas { grid-template-columns: 1fr; }
   #flujograma-app .fj-dos { grid-template-columns: 1fr; gap: 0; }
   #flujograma-app .fj-fila-top { flex-wrap: wrap; }
   #flujograma-app .fj-tipo { width: 100%; }
