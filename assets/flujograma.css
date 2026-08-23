@@ -1,0 +1,1284 @@
+/*!
+ * Asistente Pedagogico - Constructor de Flujogramas
+ * Version 1.0.0
+ *
+ * REGLA DE ORO: absolutamente todos los selectores empiezan por #flujograma-app.
+ * El sitio de SIEPSI usa el tema "extremestore" + WPBakery, que inyectan mucho CSS
+ * global. Sin este aislamiento, el dia de la migracion el tema nos desarma el diseno.
+ * Tampoco se define aqui ninguna regla para body, html o etiquetas sueltas.
+ */
+
+/* ==========================================================================
+   1. VARIABLES Y BLINDAJE CONTRA EL TEMA
+   ========================================================================== */
+
+#flujograma-app {
+  --fj-navy: #09364d;   /* medido del header real de siepsi.com.co */
+  --fj-navy-2: #17546b;
+  --fj-verde: #7ac142;
+  --fj-verde-o: #5c9a2e;
+  --fj-verde-cl: #eef7e6;
+  --fj-txt: #1d2b32;
+  --fj-txt-2: #5b6b73;
+  --fj-txt-3: #8697a0;
+  --fj-bor: #e2e4de;
+  --fj-bor-2: #eef0ea;
+  --fj-linea: rgba(9, 54, 77, .14);
+  --fj-bg: #faf9f6;
+  --fj-hueso: #faf9f6;   /* blanco roto de la pantalla de bienvenida */
+  --fj-blanco: #ffffff;
+  --fj-amb: #8a6116;
+  --fj-amb-bg: #fff6e0;
+  --fj-amb-bor: #f0d79a;
+  --fj-rojo: #b3261e;
+  --fj-rojo-bg: #fdecea;
+  --fj-r: 0;          /* esquinas rectas: es el estilo de SIEPSI */
+  --fj-r-sm: 0;
+  --fj-sombra: 0 1px 2px rgba(9, 54, 77, .04), 0 6px 18px rgba(9, 54, 77, .05);
+  --fj-fuente: "Lato", "Raleway", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fj-titulos: "Raleway", "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+  font-family: var(--fj-fuente);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--fj-txt);
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  display: block;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+#flujograma-app,
+#flujograma-app *,
+#flujograma-app *::before,
+#flujograma-app *::after { box-sizing: border-box; }
+
+#flujograma-app h2, #flujograma-app h3, #flujograma-app h4,
+#flujograma-app p, #flujograma-app ul, #flujograma-app ol,
+#flujograma-app li, #flujograma-app label, #flujograma-app div,
+#flujograma-app span, #flujograma-app b, #flujograma-app details,
+#flujograma-app summary, #flujograma-app section, #flujograma-app header {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  list-style: none;
+  text-align: inherit;
+  float: none;
+  text-shadow: none;
+}
+
+#flujograma-app button,
+#flujograma-app input,
+#flujograma-app select {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  border: 0;
+  background: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.3;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  outline: none;
+}
+
+#flujograma-app button { cursor: pointer; }
+#flujograma-app button:disabled { cursor: not-allowed; }
+
+#flujograma-app a {
+  color: var(--fj-navy-2);
+  text-decoration: underline;
+  box-shadow: none;
+  border: 0;
+}
+
+/* Los titulos van en Raleway, como los del sitio; el cuerpo en Lato. */
+#flujograma-app h2, #flujograma-app h3, #flujograma-app h4 { font-family: var(--fj-titulos); }
+
+#flujograma-app svg { max-width: 100%; height: auto; display: block; }
+#flujograma-app .fj-oculto { display: none !important; }
+
+/* ==========================================================================
+   2. ESTRUCTURA
+   ========================================================================== */
+
+#flujograma-app .fj-shell {
+  position: relative;
+  background: var(--fj-bg);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r);
+}
+
+/* Zona superior. Antes era una barra oscura pegada al header del sitio: dos
+   bandas oscuras seguidas competian entre si. Ahora es clara y arrastra la
+   rejilla de puntos de la bienvenida, de modo que las dos pantallas se leen
+   como una sola pieza. */
+#flujograma-app .fj-tope {
+  position: relative;
+  overflow: hidden;
+  background: var(--fj-hueso);
+  border-bottom: 1px solid var(--fj-linea);
+  padding: 22px 22px 0;
+}
+
+#flujograma-app .fj-tope-rejilla {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(rgba(9, 54, 77, .15) 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+#flujograma-app .fj-tope-fila {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+#flujograma-app .fj-h-tit {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--fj-verde-o);
+}
+#flujograma-app .fj-h-nom {
+  font-family: var(--fj-titulos);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--fj-navy);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+#flujograma-app .fj-h-acc { display: flex; flex-wrap: wrap; gap: 7px; }
+
+#flujograma-app .fj-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+  gap: 0;
+  /* sin align-items:start, para que las dos columnas se estiren a la altura de
+     la mas alta y sus fondos lleguen hasta el borde inferior */
+}
+
+#flujograma-app .fj-col-edit {
+  padding: 26px 22px 24px;
+  border-right: 1px solid var(--fj-linea);
+  background: #fff;
+  min-width: 0;
+}
+
+#flujograma-app .fj-col-prev {
+  padding: 26px 22px 24px;
+  min-width: 0;
+}
+
+/* Lo que se queda fijo al hacer scroll es este bloque, no la columna. */
+#flujograma-app .fj-prev-sticky {
+  position: sticky;
+  top: 12px;
+}
+
+/* ==========================================================================
+   3. BOTONES
+   ========================================================================== */
+
+#flujograma-app .fj-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--fj-r-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .06s ease;
+  white-space: nowrap;
+}
+#flujograma-app .fj-btn:active { transform: translateY(1px); }
+#flujograma-app .fj-btn:focus-visible { outline: 3px solid rgba(122, 193, 66, .55); outline-offset: 2px; }
+
+/* El verde deja de ser un bloque solido y vuelve a ser acento: se reserva para
+   las etiquetas, el paso completado y las barras de la rubrica. La accion
+   principal pasa al azul de la marca. */
+#flujograma-app .fj-btn-pri {
+  background: var(--fj-navy);
+  color: #fff;
+  border-color: var(--fj-navy);
+}
+#flujograma-app .fj-btn-pri:hover { background: #0c4a68; border-color: #0c4a68; }
+
+/* «Siguiente»: mismo contorno con relleno que barre que el botón de la
+   bienvenida, para que las dos pantallas compartan gesto. */
+#flujograma-app .fj-btn-sig {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  color: var(--fj-navy);
+  border: 1.5px solid var(--fj-navy);
+  padding: 11px 22px;
+}
+#flujograma-app .fj-btn-sig::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: var(--fj-navy);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+  z-index: -1;
+}
+#flujograma-app .fj-btn-sig:hover { color: #fff; }
+#flujograma-app .fj-btn-sig:hover::before { transform: scaleX(1); transform-origin: left; }
+
+#flujograma-app .fj-btn-sec {
+  background: var(--fj-blanco);
+  color: var(--fj-navy);
+  border-color: var(--fj-bor);
+}
+#flujograma-app .fj-btn-sec:hover { border-color: var(--fj-navy-2); background: #f7fbfc; }
+#flujograma-app .fj-btn-sec:disabled { color: var(--fj-txt-3); background: var(--fj-bor-2); border-color: var(--fj-bor); }
+
+#flujograma-app .fj-btn-linea {
+  background: rgba(255, 255, 255, .72);
+  color: var(--fj-navy);
+  border-color: var(--fj-linea);
+  padding: 8px 14px;
+  font-size: 12.5px;
+}
+#flujograma-app .fj-btn-linea:hover { background: #fff; border-color: var(--fj-navy); }
+
+#flujograma-app .fj-btn-sm { padding: 7px 12px; font-size: 13px; }
+#flujograma-app .fj-btn-ancho { width: 100%; }
+
+/* ==========================================================================
+   4. RIEL DE PASOS
+   ========================================================================== */
+
+/* Seis segmentos iguales que ocupan el ancho completo de la herramienta, no
+   solo el de la columna izquierda: asi la vista queda equilibrada y el avance
+   se lee como una barra de progreso, no como una fila de pastillas. */
+#flujograma-app .fj-rail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+#flujograma-app .fj-rail-i button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 8px 16px 0;
+  border-top: 2px solid var(--fj-linea);
+  color: var(--fj-txt-3);
+  transition: border-top-color .2s ease, color .2s ease;
+}
+#flujograma-app .fj-rail-i button:hover { color: var(--fj-navy); }
+
+#flujograma-app .fj-rail-n {
+  display: block;
+  font-family: var(--fj-titulos);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: .02em;
+}
+
+#flujograma-app .fj-rail-t {
+  display: block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  line-height: 1.3;
+}
+
+#flujograma-app .fj-rail-act button { border-top-color: var(--fj-navy); color: var(--fj-navy); }
+#flujograma-app .fj-rail-act .fj-rail-n { font-weight: 600; }
+
+#flujograma-app .fj-rail-ok button { border-top-color: var(--fj-verde); color: var(--fj-verde-o); }
+
+/* ==========================================================================
+   5. PANEL DEL PASO
+   ========================================================================== */
+
+#flujograma-app .fj-paso-et {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--fj-verde-o);
+  margin-bottom: 5px;
+}
+#flujograma-app .fj-paso-cab h3 {
+  font-family: var(--fj-titulos);
+  font-size: clamp(1.5rem, 2.5vw, 1.9rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -.025em;
+  color: var(--fj-navy);
+  margin-top: 2px;
+}
+
+#flujograma-app .fj-preg {
+  font-size: 16.5px;
+  line-height: 1.5;
+  color: var(--fj-txt);
+  margin: 12px 0 10px;
+}
+#flujograma-app .fj-var {
+  font-weight: 700;
+  color: var(--fj-navy);
+  background: var(--fj-verde-cl);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+#flujograma-app .fj-ayuda {
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r-sm);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+/* El «?» suelto delante del texto parecia un error de codificacion. Ahora es
+   un distintivo enmarcado, y a la derecha hay una flecha que gira al abrir,
+   para que se lea como un desplegable y no como una advertencia. */
+#flujograma-app .fj-ayuda summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fj-navy-2);
+  list-style: none;
+}
+#flujograma-app .fj-ayuda summary::-webkit-details-marker { display: none; }
+
+#flujograma-app .fj-ayuda summary::before {
+  content: "?";
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: .7;
+}
+
+#flujograma-app .fj-ayuda summary::after {
+  content: "";
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: .55;
+  transition: transform .2s ease;
+}
+#flujograma-app .fj-ayuda[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+#flujograma-app .fj-ayuda[open] summary { border-bottom: 1px solid var(--fj-bor-2); }
+#flujograma-app .fj-ayuda > div {
+  padding: 11px 14px 13px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fj-txt-2);
+}
+#flujograma-app .fj-ayuda b { font-weight: 700; color: var(--fj-txt); }
+#flujograma-app .fj-ayuda i { font-style: italic; }
+
+/* Recordatorio contextual: el corazon pedagogico de la herramienta */
+#flujograma-app .fj-record {
+  background: var(--fj-verde-cl);
+  border-left: 4px solid var(--fj-verde);
+  border-radius: 0 var(--fj-r-sm) var(--fj-r-sm) 0;
+  padding: 11px 15px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+#flujograma-app .fj-record-et {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--fj-verde-o);
+  margin-bottom: 2px;
+}
+#flujograma-app .fj-record > b { font-size: 16px; font-weight: 700; color: var(--fj-navy); }
+#flujograma-app .fj-record p { margin-top: 4px; color: var(--fj-txt-2); line-height: 1.5; }
+#flujograma-app .fj-record p b { color: var(--fj-navy); font-weight: 700; }
+
+#flujograma-app .fj-record-warn {
+  background: var(--fj-amb-bg);
+  border-left-color: #e0a93c;
+}
+#flujograma-app .fj-record-warn > b { color: var(--fj-amb); }
+
+#flujograma-app .fj-enlace {
+  color: var(--fj-navy-2);
+  text-decoration: underline;
+  font-weight: 600;
+  padding: 0;
+}
+
+/* ==========================================================================
+   6. CAMPOS
+   ========================================================================== */
+
+#flujograma-app .fj-input {
+  display: block;
+  width: 100%;
+  padding: 11px 13px;
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r-sm);
+  font-size: 15px;
+  color: var(--fj-txt);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+#flujograma-app .fj-input::placeholder { color: var(--fj-txt-3); opacity: 1; }
+#flujograma-app .fj-input:focus {
+  border-color: var(--fj-verde-o);
+  box-shadow: 0 0 0 3px rgba(122, 193, 66, .22);
+}
+#flujograma-app .fj-input-gr { font-size: 17px; padding: 13px 15px; font-weight: 600; }
+
+#flujograma-app .fj-lista { display: flex; flex-direction: column; gap: 8px; }
+
+#flujograma-app .fj-item { display: flex; align-items: flex-start; gap: 9px; }
+#flujograma-app .fj-item-c { flex: 1 1 auto; min-width: 0; }
+#flujograma-app .fj-item-n {
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  margin-top: 11px;
+  border-radius: 0;
+  background: var(--fj-bor-2);
+  color: var(--fj-txt-3);
+  font-size: 11.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#flujograma-app .fj-quitar {
+  flex: 0 0 auto;
+  width: 30px; height: 30px;
+  margin-top: 7px;
+  border-radius: 0;
+  color: var(--fj-txt-3);
+  font-size: 19px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#flujograma-app .fj-quitar:hover:not(:disabled) { background: var(--fj-rojo-bg); color: var(--fj-rojo); }
+#flujograma-app .fj-quitar:disabled { opacity: .3; }
+
+#flujograma-app .fj-item-av:empty { display: none; }
+#flujograma-app .fj-item-av { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 5px; }
+#flujograma-app .fj-av {
+  display: inline-block;
+  background: var(--fj-amb-bg);
+  border: 1px solid var(--fj-amb-bor);
+  color: var(--fj-amb);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 3px 9px;
+  border-radius: 0;
+}
+
+#flujograma-app .fj-lista-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+#flujograma-app .fj-cont { font-size: 12.5px; color: var(--fj-txt-3); font-weight: 600; }
+#flujograma-app .fj-cont-ok { color: var(--fj-verde-o); }
+
+#flujograma-app .fj-campo { margin-bottom: 4px; }
+
+#flujograma-app .fj-lbl {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fj-txt-2);
+  margin-bottom: 10px;
+}
+#flujograma-app .fj-lbl .fj-input { margin-top: 5px; font-weight: 400; font-size: 14px; }
+
+/* ==========================================================================
+   7. NAVEGACION INFERIOR
+   ========================================================================== */
+
+#flujograma-app .fj-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--fj-bor);
+}
+#flujograma-app .fj-nav-pos { font-size: 12.5px; color: var(--fj-txt-3); font-weight: 600; }
+
+/* ==========================================================================
+   8. VISTA PREVIA
+   ========================================================================== */
+
+#flujograma-app .fj-prev-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+#flujograma-app .fj-prev-tit {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--fj-txt-3);
+}
+#flujograma-app .fj-tema-lbl {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fj-txt-2);
+}
+#flujograma-app .fj-select {
+  padding: 6px 26px 6px 10px;
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r-sm);
+  background: var(--fj-blanco) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235b6b73'/%3E%3C/svg%3E") no-repeat right 9px center;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#flujograma-app .fj-lienzo {
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r);
+  padding: 10px;
+  box-shadow: var(--fj-sombra);
+  overflow: hidden;
+}
+#flujograma-app .fj-svg-caja { overflow-x: auto; cursor: zoom-in; }
+#flujograma-app .fj-svg-caja:focus-visible { outline: 3px solid rgba(122, 193, 66, .55); outline-offset: 3px; }
+#flujograma-app .fj-svg-caja svg { width: 100%; }
+
+#flujograma-app .fj-vacio {
+  padding: 54px 26px;
+  text-align: center;
+  color: var(--fj-txt-3);
+  font-size: 14px;
+  line-height: 1.6;
+}
+#flujograma-app .fj-vacio b { color: var(--fj-txt-2); font-size: 15px; }
+#flujograma-app .fj-vacio p + p { margin-top: 7px; }
+
+#flujograma-app .fj-exp { margin-top: 14px; }
+#flujograma-app .fj-exp-fila { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+#flujograma-app .fj-exp-nota { margin-top: 9px; font-size: 12px; line-height: 1.5; color: var(--fj-txt-3); }
+#flujograma-app .fj-exp-nota b { font-weight: 700; color: var(--fj-txt-2); }
+
+/* ==========================================================================
+   9. RUBRICA
+   ========================================================================== */
+
+#flujograma-app .fj-rub {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r);
+  padding: 16px 18px;
+  margin-bottom: 8px;
+}
+
+#flujograma-app .fj-rub-total {
+  flex: 0 0 auto;
+  width: 84px;
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: var(--fj-r-sm);
+}
+#flujograma-app .fj-rub-total b { display: block; font-size: 30px; font-weight: 700; line-height: 1.05; }
+#flujograma-app .fj-rub-total span { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+#flujograma-app .fj-niv-exc { background: var(--fj-verde-cl); color: var(--fj-verde-o); }
+#flujograma-app .fj-niv-bue { background: #e7f2f7; color: var(--fj-navy-2); }
+#flujograma-app .fj-niv-ace { background: var(--fj-amb-bg); color: var(--fj-amb); }
+#flujograma-app .fj-niv-con { background: var(--fj-bor-2); color: var(--fj-txt-2); }
+
+#flujograma-app .fj-rub-barras { flex: 1 1 auto; min-width: 0; }
+#flujograma-app .fj-rub-fila + .fj-rub-fila { margin-top: 9px; }
+#flujograma-app .fj-rub-cab {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fj-txt-2);
+  margin-bottom: 3px;
+}
+#flujograma-app .fj-rub-cab b { font-weight: 700; color: var(--fj-txt); }
+#flujograma-app .fj-barra { height: 7px; background: var(--fj-bor-2); border-radius: 0; overflow: hidden; }
+#flujograma-app .fj-barra i { display: block; height: 100%; border-radius: 0; transition: width .3s ease; }
+#flujograma-app .fj-b-ok { background: var(--fj-verde); }
+#flujograma-app .fj-b-med { background: #e0a93c; }
+#flujograma-app .fj-b-baja { background: #d9736a; }
+
+#flujograma-app .fj-rub-nota { font-size: 11.5px; color: var(--fj-txt-3); margin-bottom: 16px; line-height: 1.5; }
+
+#flujograma-app .fj-sug {
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r);
+  padding: 15px 18px;
+  margin-bottom: 16px;
+}
+#flujograma-app .fj-sug h4 { font-size: 15px; font-weight: 700; color: var(--fj-navy); margin-bottom: 10px; }
+#flujograma-app .fj-sug-ok { background: var(--fj-verde-cl); border-color: #cfe7b8; }
+#flujograma-app .fj-sug-ok h4 { color: var(--fj-verde-o); }
+#flujograma-app .fj-sug-ok p { font-size: 13.5px; color: var(--fj-txt-2); line-height: 1.55; }
+
+#flujograma-app .fj-sug-g + .fj-sug-g { margin-top: 12px; }
+#flujograma-app .fj-sug-et {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  padding: 2px 8px;
+  border-radius: 0;
+  margin-bottom: 5px;
+}
+#flujograma-app .fj-et-secuencia { background: #e7f2f7; color: var(--fj-navy-2); }
+#flujograma-app .fj-et-simbolos { background: var(--fj-amb-bg); color: var(--fj-amb); }
+#flujograma-app .fj-et-informacion { background: #f0ebf7; color: #6b4c9a; }
+
+#flujograma-app .fj-sug-g ul li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--fj-txt-2);
+}
+#flujograma-app .fj-sug-g ul li + li { margin-top: 4px; }
+#flujograma-app .fj-sug-g ul li::before {
+  content: "";
+  position: absolute;
+  left: 3px; top: 8px;
+  width: 5px; height: 5px;
+  background: var(--fj-txt-3);
+}
+
+#flujograma-app .fj-meta {
+  background: var(--fj-blanco);
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r);
+  padding: 15px 18px;
+  margin-bottom: 16px;
+}
+#flujograma-app .fj-meta h4 { font-size: 15px; font-weight: 700; color: var(--fj-navy); margin-bottom: 11px; }
+#flujograma-app .fj-opc {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--fj-txt-3);
+  background: var(--fj-bor-2);
+  padding: 2px 7px;
+  border-radius: 0;
+  margin-left: 5px;
+}
+
+#flujograma-app .fj-cta {
+  background: var(--fj-hueso);
+  border: 1px solid var(--fj-linea);
+  border-left: 3px solid var(--fj-verde);
+  padding: 18px 20px;
+}
+#flujograma-app .fj-cta h4 { font-size: 16px; font-weight: 700; color: var(--fj-navy); margin-bottom: 5px; }
+#flujograma-app .fj-cta p { font-size: 13.5px; line-height: 1.55; color: var(--fj-txt-2); margin-bottom: 13px; }
+#flujograma-app .fj-cta .fj-btn { text-decoration: none; }
+
+/* ==========================================================================
+   10. AVISOS FLOTANTES
+   ========================================================================== */
+
+#flujograma-app .fj-avisos:empty { display: none; }
+/* Van en lo mas alto de la herramienta, por encima del titulo: estos mensajes
+   salen al cargar o al ejecutar una accion, y ahi es donde el usuario esta
+   mirando. No se autodestruyen: se cierran con la X. */
+#flujograma-app .fj-avisos {
+  padding: 14px 22px;
+  background: var(--fj-hueso);
+  border-bottom: 1px solid var(--fj-linea);
+}
+#flujograma-app .fj-flash {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #e7f2f7;
+  border: 1px solid #bcd9e5;
+  color: var(--fj-navy);
+  padding: 10px 10px 10px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  animation: fjEntrada .35s cubic-bezier(.16, 1, .3, 1) both;
+}
+#flujograma-app .fj-flash-txt { flex: 1 1 auto; }
+#flujograma-app .fj-flash + .fj-flash { margin-top: 7px; }
+#flujograma-app .fj-flash-err { background: var(--fj-rojo-bg); border-color: #f3c2bd; color: var(--fj-rojo); }
+#flujograma-app .fj-flash a { color: inherit; font-weight: 700; }
+#flujograma-app .fj-flash-x {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  font-size: 17px;
+  line-height: 1;
+  color: inherit;
+  opacity: .55;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#flujograma-app .fj-flash-x:hover { opacity: 1; background: rgba(9, 54, 77, .09); }
+
+/* ==========================================================================
+   11. MODAL
+   ========================================================================== */
+
+#flujograma-app .fj-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 59, 77, .55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#flujograma-app .fj-modal-caja {
+  background: var(--fj-blanco);
+  border-radius: var(--fj-r);
+  width: 100%;
+  max-width: 470px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
+}
+#flujograma-app .fj-modal-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--fj-bor);
+}
+#flujograma-app .fj-modal-cab h3 { font-size: 16px; font-weight: 700; color: var(--fj-navy); }
+#flujograma-app .fj-x {
+  width: 30px; height: 30px;
+  border-radius: 0;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--fj-txt-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#flujograma-app .fj-x:hover { background: var(--fj-bor-2); color: var(--fj-txt); }
+#flujograma-app .fj-modal-cuerpo { padding: 16px 18px 18px; }
+#flujograma-app .fj-modal-int { font-size: 13px; color: var(--fj-txt-2); margin-bottom: 13px; line-height: 1.5; }
+
+#flujograma-app .fj-ej {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--fj-bor);
+  border-radius: var(--fj-r-sm);
+  background: var(--fj-blanco);
+  transition: border-color .15s ease, background-color .15s ease;
+}
+#flujograma-app .fj-ej + .fj-ej { margin-top: 8px; }
+#flujograma-app .fj-ej:hover { border-color: var(--fj-verde-o); background: var(--fj-verde-cl); }
+#flujograma-app .fj-ej b { display: block; font-size: 14.5px; font-weight: 700; color: var(--fj-navy); }
+#flujograma-app .fj-ej span { display: block; font-size: 12.5px; color: var(--fj-txt-2); margin-top: 2px; line-height: 1.45; }
+
+/* ==========================================================================
+   12. RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  #flujograma-app .fj-rail { grid-template-columns: repeat(3, 1fr); row-gap: 14px; }
+}
+
+@media (max-width: 460px) {
+  #flujograma-app .fj-rail { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 980px) {
+  #flujograma-app .fj-grid { grid-template-columns: minmax(0, 1fr); }
+  #flujograma-app .fj-col-edit { border-right: 0; border-bottom: 1px solid var(--fj-linea); }
+  #flujograma-app .fj-prev-sticky { position: static; }
+}
+
+@media (max-width: 620px) {
+  #flujograma-app { font-size: 15px; }
+  #flujograma-app .fj-tope { padding: 16px 16px 0; }
+  #flujograma-app .fj-h-acc { width: 100%; }
+  #flujograma-app .fj-h-acc .fj-btn { flex: 1 1 auto; }
+  #flujograma-app .fj-col-edit,
+  #flujograma-app .fj-col-prev { padding: 16px; }
+  #flujograma-app .fj-avisos { padding: 12px 16px 0; }
+  #flujograma-app .fj-rail-t { font-size: 9.5px; letter-spacing: .05em; }
+  #flujograma-app .fj-rub { flex-direction: column; align-items: stretch; gap: 14px; }
+  #flujograma-app .fj-rub-total { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  #flujograma-app .fj-rub-total b { font-size: 24px; }
+  #flujograma-app .fj-exp-fila { grid-template-columns: 1fr; }
+  #flujograma-app .fj-nav .fj-btn { flex: 1 1 auto; }
+}
+
+
+/* ==========================================================================
+   13b. VISTA AMPLIADA (LUPA)
+   ========================================================================== */
+
+#flujograma-app .fj-lupa {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 99999;
+  background: rgba(9, 54, 77, .82);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+#flujograma-app .fj-lupa-barra {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--fj-linea);
+}
+
+#flujograma-app .fj-lupa-tit {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--fj-txt-3);
+}
+
+#flujograma-app .fj-lupa-acc { display: flex; align-items: center; gap: 7px; }
+
+#flujograma-app .fj-zbtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--fj-linea);
+  background: #fff;
+  color: var(--fj-navy);
+  font-size: 17px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#flujograma-app .fj-zbtn:hover { border-color: var(--fj-navy); background: var(--fj-hueso); }
+
+#flujograma-app .fj-zpct {
+  min-width: 48px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--fj-txt-2);
+  font-variant-numeric: tabular-nums;
+}
+
+#flujograma-app .fj-lupa-cuerpo {
+  flex: 1 1 auto;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--fj-linea);
+  border-top: 0;
+  padding: 20px;
+  cursor: grab;
+}
+#flujograma-app .fj-lupa-cuerpo.fj-arrastrando { cursor: grabbing; }
+
+#flujograma-app .fj-lupa-marco { margin: 0 auto; }
+#flujograma-app .fj-lupa-marco svg { width: 100%; height: auto; max-width: none; }
+
+@media (max-width: 620px) {
+  #flujograma-app .fj-lupa { padding: 8px; }
+  #flujograma-app .fj-lupa-cuerpo { padding: 10px; }
+  #flujograma-app .fj-lupa-tit { display: none; }
+  #flujograma-app .fj-lupa-acc { width: 100%; justify-content: space-between; }
+}
+
+/* ==========================================================================
+   14. PANTALLA DE BIENVENIDA
+   ==========================================================================
+   Vive dentro de la herramienta, no en la página que la contiene: así el
+   shortcode de WordPress la trae igual que la demo. Fondo plano con rejilla
+   de puntos, sin degradados ni círculos difuminados. */
+
+#flujograma-app .fj-bienvenida {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  min-height: min(76vh, 640px);
+  background: var(--fj-hueso);
+  border: 1px solid var(--fj-bor);
+}
+
+#flujograma-app .fj-bv-rejilla {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(rgba(9, 54, 77, .22) 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+#flujograma-app .fj-bv-cont {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: clamp(30px, 5.2vw, 70px);
+}
+
+#flujograma-app .fj-bv-et {
+  font-family: var(--fj-titulos);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--fj-verde-o);
+}
+
+#flujograma-app .fj-bv-titulo {
+  font-family: var(--fj-titulos);
+  font-size: clamp(3.1rem, 8vw, 6.4rem);
+  font-weight: 300;
+  line-height: .92;
+  letter-spacing: -.035em;
+  color: var(--fj-navy);
+  margin-top: 12px;
+}
+
+#flujograma-app .fj-bv-texto {
+  max-width: 60ch;
+  margin-top: clamp(26px, 4vw, 44px);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+#flujograma-app .fj-bv-l1 {
+  font-size: clamp(1.22rem, 2.3vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  color: var(--fj-txt);
+}
+
+#flujograma-app .fj-bv-l2 {
+  font-size: clamp(.95rem, 1.15vw, 1.06rem);
+  line-height: 1.62;
+  color: var(--fj-txt-2);
+}
+
+/* Nota de alcance: deja claro desde la portada hasta dónde llega la
+   herramienta, para no generar expectativas que no puede cumplir. */
+#flujograma-app .fj-bv-nota {
+  max-width: 54ch;
+  margin-top: 4px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(9, 54, 77, .14);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--fj-txt-3);
+}
+
+#flujograma-app .fj-bv-l3 {
+  margin-top: 12px;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--fj-txt-3);
+}
+
+#flujograma-app .fj-bv-pie {
+  margin-top: auto;
+  padding-top: clamp(30px, 5vw, 56px);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Botón de entrada: contorno recto y relleno que barre desde la derecha. */
+#flujograma-app .fj-entrar {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 34px;
+  border: 1.5px solid var(--fj-navy);
+  color: var(--fj-navy);
+  font-family: var(--fj-titulos);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  transition: color .4s cubic-bezier(.16, 1, .3, 1),
+              transform .4s cubic-bezier(.16, 1, .3, 1),
+              box-shadow .4s cubic-bezier(.16, 1, .3, 1);
+}
+
+#flujograma-app .fj-entrar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: var(--fj-navy);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+  z-index: -1;
+}
+
+#flujograma-app .fj-entrar:hover {
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(9, 54, 77, .2);
+}
+#flujograma-app .fj-entrar:hover::before { transform: scaleX(1); transform-origin: left; }
+#flujograma-app .fj-entrar:focus-visible { outline: 3px solid rgba(122, 193, 66, .55); outline-offset: 3px; }
+
+/* El reset global pone height:auto en los svg; la flecha necesita medidas fijas. */
+#flujograma-app .fj-flecha {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  transition: transform .3s cubic-bezier(.16, 1, .3, 1);
+}
+#flujograma-app .fj-entrar:hover .fj-flecha { transform: translateX(6px); }
+
+@keyframes fjEntrada {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+#flujograma-app .fj-bv-et,
+#flujograma-app .fj-bv-titulo,
+#flujograma-app .fj-bv-texto,
+#flujograma-app .fj-bv-pie { animation: fjEntrada .7s cubic-bezier(.16, 1, .3, 1) both; }
+#flujograma-app .fj-bv-titulo { animation-delay: .07s; }
+#flujograma-app .fj-bv-texto  { animation-delay: .16s; }
+#flujograma-app .fj-bv-pie    { animation-delay: .26s; }
+
+@media (max-width: 620px) {
+  #flujograma-app .fj-bienvenida { min-height: 0; }
+  #flujograma-app .fj-bv-pie { padding-top: 34px; }
+  #flujograma-app .fj-entrar { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #flujograma-app .fj-bv-et,
+  #flujograma-app .fj-bv-titulo,
+  #flujograma-app .fj-bv-texto,
+  #flujograma-app .fj-bv-pie { animation: none; }
+  #flujograma-app .fj-entrar,
+  #flujograma-app .fj-entrar::before,
+  #flujograma-app .fj-flecha { transition: none; }
+  #flujograma-app .fj-entrar:hover { transform: none; }
+}
+
+/* ==========================================================================
+   15. IMPRESION DE LA PAGINA (distinto del PDF, que usa su propio iframe)
+   ========================================================================== */
+
+@media print {
+  #flujograma-app .fj-bienvenida,
+  #flujograma-app .fj-tope,
+  #flujograma-app .fj-rail,
+  #flujograma-app .fj-col-edit,
+  #flujograma-app .fj-prev-barra,
+  #flujograma-app .fj-exp,
+  #flujograma-app .fj-avisos,
+  #flujograma-app .fj-modal,
+  #flujograma-app .fj-lupa,
+  #flujograma-app .fj-avisos { display: none !important; }
+
+  #flujograma-app .fj-shell { border: 0; background: #fff; }
+  #flujograma-app .fj-grid { display: block; }
+  #flujograma-app .fj-col-prev { padding: 0; position: static; }
+  #flujograma-app .fj-lienzo { border: 0; box-shadow: none; padding: 0; }
+  #flujograma-app .fj-svg-caja svg { width: 100%; }
+}
+
+/* ==========================================================================
+   16. EDITOR DE ESQUEMA
+   ==========================================================================
+   Aqui el usuario escribe el proceso como una lista. No arrastra ni conecta
+   nada: la posicion de cada simbolo y el trazado de las flechas los calcula
+   el motor de dibujo. */
+
+#flujograma-app .fj-term {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid var(--fj-linea);
+  background: var(--fj-verde-cl);
+  color: var(--fj-verde-o);
+  font-size: 13px;
+}
+#flujograma-app .fj-term b { font-weight: 700; color: var(--fj-navy); }
+
+#flujograma-app .fj-ico { width: 20px; height: 20px; flex: 0 0 auto; display: block; }
+
+#flujograma-app .fj-esquema {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 0;
+  margin-left: 9px;
+  padding-left: 18px;
+  border-left: 2px solid var(--fj-linea);
+}
+
+#flujograma-app .fj-fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  background: #fff;
+  border: 1px solid var(--fj-bor);
+}
+#flujograma-app .fj-fila-ico { margin-top: 8px; color: var(--fj-navy); flex: 0 0 auto; }
+#flujograma-app .fj-fila-decision { border-color: var(--fj-navy-2); background: #f7fbfc; }
+#flujograma-app .fj-fila-decision .fj-fila-ico { color: var(--fj-navy-2); }
+#flujograma-app .fj-fila-fin .fj-fila-ico { color: var(--fj-verde-o); }
+
+#flujograma-app .fj-fila-c { flex: 1 1 auto; min-width: 0; }
+#flujograma-app .fj-fila-top { display: flex; gap: 8px; align-items: center; }
+#flujograma-app .fj-tipo { flex: 0 0 auto; width: 132px; padding: 9px 26px 9px 10px; font-size: 12.5px; }
+#flujograma-app .fj-texto { flex: 1 1 auto; min-width: 0; }
+
+#flujograma-app .fj-fila-av:empty { display: none; }
+#flujograma-app .fj-fila-av { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 5px; }
+
+#flujograma-app .fj-fila-acc { display: flex; flex-direction: column; gap: 2px; flex: 0 0 auto; }
+#flujograma-app .fj-mini {
+  width: 26px;
+  height: 20px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--fj-txt-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+#flujograma-app .fj-mini:hover { background: var(--fj-bor-2); color: var(--fj-navy); }
+#flujograma-app .fj-mini-del:hover { background: var(--fj-rojo-bg); color: var(--fj-rojo); }
+
+/* --- Ramas de una decision ------------------------------------------------ */
+
+#flujograma-app .fj-ramas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: -2px 0 4px 26px;
+}
+
+#flujograma-app .fj-rama {
+  border: 1px solid var(--fj-linea);
+  border-top: 2px solid var(--fj-verde);
+  background: var(--fj-hueso);
+}
+#flujograma-app .fj-rama:last-child { border-top-color: #d9736a; }
+
+#flujograma-app .fj-rama-cab { padding: 7px 11px 0; }
+#flujograma-app .fj-rama-et {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--fj-txt-3);
+}
+#flujograma-app .fj-rama-cuerpo { padding: 8px 11px 11px; display: flex; flex-direction: column; gap: 7px; }
+#flujograma-app .fj-rama-cuerpo > .fj-btn { align-self: flex-start; }
+#flujograma-app .fj-rama-vacia { font-size: 12px; line-height: 1.5; color: var(--fj-txt-3); }
+#flujograma-app .fj-rama .fj-tipo { width: 112px; }
+#flujograma-app .fj-rama .fj-ramas { grid-template-columns: 1fr; margin-left: 14px; }
+
+#flujograma-app .fj-esquema-pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 14px 27px;
+}
+
+#flujograma-app .fj-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 760px) {
+  #flujograma-app .fj-ramas { grid-template-columns: 1fr; }
+  #flujograma-app .fj-dos { grid-template-columns: 1fr; gap: 0; }
+  #flujograma-app .fj-fila-top { flex-wrap: wrap; }
+  #flujograma-app .fj-tipo { width: 100%; }
+}

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asistente Pedagógico · Constructor de Flujogramas · SIEPSI</title>
+  <meta name="description"
+    content="Herramienta gratuita para construir diagramas de flujo paso a paso y descargarlos en PNG o PDF. Semillero de Investigación SIEPSI.">
+  <meta name="robots" content="noindex">
+
+  <!-- Raleway (menú) y Lato (cuerpo) son las tipografías reales de siepsi.com.co.
+       En WordPress ya vienen cargadas por el tema, así que allá esta etiqueta
+       no existe. Aquí se pide solo para que la demo se vea idéntica al sitio. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Raleway:wght@300;400;600;700&display=swap">
+
+  <link rel="stylesheet" href="assets/flujograma.css">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2309364d'/%3E%3Crect x='11' y='5' width='10' height='5' fill='%237ac142'/%3E%3Crect x='9' y='13.5' width='14' height='5' fill='%23fff'/%3E%3Crect x='11' y='22' width='10' height='5' fill='%237ac142'/%3E%3C/svg%3E">
+
+  <!--
+    CÁSCARA DE LA DEMO PARA GITHUB PAGES
+
+    Solo cabecera y pie. La cabecera replica la de siepsi.com.co con los valores
+    medidos del sitio real: fondo #09364D y menú en Raleway de 12 px en
+    mayúsculas con padding 0 17px. El logo va al doble del original (210 px).
+
+    Todo lo de este <style> usa el prefijo .sp- y pertenece SOLO a esta demo.
+    El día que la herramienta se monte en WordPress esta cáscara desaparece: la
+    cabecera y el pie los pone el tema, y el <div> lo pone el shortcode.
+
+    OJO: la pantalla de bienvenida NO está aquí, está dentro de la herramienta
+    (assets/flujograma.js y .css). Así el shortcode también la trae.
+  -->
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Columna a pantalla completa: si el contenido no llena el alto de la
+       ventana, .sp-app se estira y el pie queda pegado abajo en vez de
+       flotar a media pantalla. */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #faf9f6;
+      color: #1d2b32;
+      font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    /* --- Cabecera: réplica de la de siepsi.com.co --------------------------- */
+    .sp-top {
+      background: #09364d;
+      flex: 0 0 auto;
+    }
+
+    .sp-top-in {
+      max-width: 1170px;
+      margin: 0 auto;
+      height: 116px;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .sp-logo {
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .sp-logo img {
+      display: block;
+      width: 210px;
+      height: auto;
+    }
+
+    .sp-nav {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      margin-left: auto;
+    }
+
+    .sp-nav a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 17px;
+      font-family: "Raleway", Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      transition: color .2s ease;
+    }
+
+    .sp-nav a:hover,
+    .sp-nav a.sp-act {
+      color: #7ac142;
+    }
+
+    /* --- Contenido ---------------------------------------------------------- */
+    .sp-app {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 36px 20px 48px;
+      flex: 1 0 auto;
+    }
+
+    /* --- Pie: negro y sin borde superior ------------------------------------ */
+    .sp-pie {
+      background: #000;
+      flex: 0 0 auto;
+      margin-top: auto;
+    }
+
+    .sp-pie-in {
+      max-width: 1170px;
+      margin: 0 auto;
+      padding: 26px 20px 32px;
+      font-size: 13px;
+      color: #9aa4a8;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .sp-pie a {
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .3);
+    }
+
+    .sp-pie a:hover {
+      color: #7ac142;
+      border-color: #7ac142;
+    }
+
+    @media (max-width: 900px) {
+      .sp-nav {
+        display: none;
+      }
+
+      .sp-top-in {
+        height: 84px;
+        justify-content: space-between;
+      }
+
+      .sp-logo img {
+        width: 170px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .sp-app {
+        padding: 22px 16px 34px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="sp-top">
+    <div class="sp-top-in">
+      <a class="sp-logo" href="https://siepsi.com.co/" target="_blank" rel="noopener">
+        <img src="assets/SIEPSI_LOGO_OPUESTO_HORIZONTAL2-300x86.webp" width="300" height="86" alt="SIEPSI">
+      </a>
+      <nav class="sp-nav">
+        <a href="https://siepsi.com.co/">Inicio</a>
+        <a href="https://siepsi.com.co/semillero/">Semillero</a>
+        <a class="sp-act" href="https://siepsi.com.co/herramientas-academicas/">Herramientas Académicas e
+          Investigaciones</a>
+        <a href="https://siepsi.com.co/podcast/">Podcast</a>
+        <a href="https://siepsi.com.co/blog/">Blog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="sp-app">
+    <!-- ÚNICO punto de anclaje de la herramienta.
+         En WordPress este mismo div lo genera el shortcode [flujograma_siepsi]. -->
+    <div id="flujograma-app" data-tema="siepsi"></div>
+  </main>
+
+  <footer class="sp-pie">
+    <div class="sp-pie-in">
+      <span>Semillero de Investigación SIEPSI · Herramienta educativa de uso libre</span>
+      <span>
+        <a href="https://siepsi.com.co/herramientas-academicas/diagrama-de-flujo/" target="_blank" rel="noopener">Guía y
+          plantilla</a>
+        &nbsp;·&nbsp;
+        <a href="https://siepsi.com.co/" target="_blank" rel="noopener">siepsi.com.co</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="assets/flujograma.js"></script>
+</body>
+
+</html>

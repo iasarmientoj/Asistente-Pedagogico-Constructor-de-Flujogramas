@@ -1,0 +1,63 @@
+# =============================================================================
+#  Asistente Pedagógico - Constructor de Flujogramas
+#  Semillero de Investigación SIEPSI
+#
+#  Regla general: SÍ se sube casi todo. El repositorio es la fuente de verdad
+#  del proyecto, no solo la demo. Lo único que se excluye son los archivos que
+#  se regeneran solos y la basura del sistema operativo.
+#
+#  Para que GitHub Pages funcione hacen falta, como mínimo, estos tres:
+#      index.html
+#      assets/flujograma.css
+#      assets/flujograma.js
+#      assets/SIEPSI_LOGO_OPUESTO_HORIZONTAL2-300x86.webp
+# =============================================================================
+
+
+# --- Artefactos que se regeneran ---------------------------------------------
+# El ZIP del plugin lo produce construir-plugin.ps1 en dos segundos. Un binario
+# en el historial de Git solo lo infla y genera conflictos en cada versión.
+# Si prefieres tenerlo a mano para quien no sepa correr PowerShell, comenta la
+# línea siguiente y súbelo, o mejor: adjúntalo a una Release de GitHub.
+dist/
+
+# Copia automática de los assets dentro del plugin: la genera el script a
+# partir de assets/. Versionarla duplicaría los mismos archivos en el repo y
+# tarde o temprano las dos copias se desincronizan.
+wordpress/siepsi-flujograma/assets/
+
+
+# --- Windows ------------------------------------------------------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# --- macOS --------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# --- Editores e IDE -----------------------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*~
+*.swp
+*.swo
+
+# --- Herramientas locales -----------------------------------------------------
+.claude/
+node_modules/
+*.log
+
+# --- Archivos de trabajo ------------------------------------------------------
+# Flujogramas guardados durante las pruebas, por si alguno cae en la carpeta.
+*.flujograma.json
