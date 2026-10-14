@@ -15,7 +15,7 @@
      1. CONFIGURACION
      ========================================================================== */
 
-  var VERSION = '1.0.0';
+  var VERSION = '1.0.1';
   var RAIZ_ID = 'flujograma-app';
   var LS_KEY = 'siepsi_flujograma_v1';
   var URL_BLOG = 'https://siepsi.com.co/herramientas-academicas/diagrama-de-flujo-o-flujograma/';

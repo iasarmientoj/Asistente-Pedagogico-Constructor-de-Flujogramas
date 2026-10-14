@@ -47,7 +47,10 @@
   display: block;
   width: 100%;
   max-width: 1240px;
-  margin: 0 auto;
+  /* La herramienta trae su propio aire arriba y abajo. En WordPress se pega a la
+     cabecera del tema si no lo tiene; asi se ve igual en cualquier pagina sin
+     ajustar filas ni espaciadores en el editor. */
+  margin: 40px auto 56px;
 }
 
 #flujograma-app,
@@ -1331,4 +1334,9 @@
   #flujograma-app .fj-dos { grid-template-columns: 1fr; gap: 0; }
   #flujograma-app .fj-fila-top { flex-wrap: wrap; }
   #flujograma-app .fj-tipo { width: 100%; }
+}
+
+/* Aire vertical mas corto en pantallas pequenas. */
+@media (max-width: 620px) {
+  #flujograma-app { margin: 24px auto 32px; }
 }
