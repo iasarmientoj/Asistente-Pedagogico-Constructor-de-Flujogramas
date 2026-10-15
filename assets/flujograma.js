@@ -15,7 +15,7 @@
      1. CONFIGURACION
      ========================================================================== */
 
-  var VERSION = '1.0.1';
+  var VERSION = '1.0.2';
   var RAIZ_ID = 'flujograma-app';
   var LS_KEY = 'siepsi_flujograma_v1';
   var URL_BLOG = 'https://siepsi.com.co/herramientas-academicas/diagrama-de-flujo-o-flujograma/';
@@ -874,7 +874,7 @@
       '  <div class="fj-bv-rejilla" aria-hidden="true"></div>' +
       '  <div class="fj-bv-cont">' +
       '    <p class="fj-bv-et">Recursos educativos</p>' +
-      '    <h2 class="fj-bv-titulo">Flujograma</h2>' +
+      '    <h1 class="fj-bv-titulo">Flujograma</h1>' +
       '    <div class="fj-bv-texto">' +
       '      <p class="fj-bv-l1">Asistente pedagógico para construir diagramas de flujo.</p>' +
       '      <p class="fj-bv-l2">Escribe los pasos del proceso y marca dónde se toma una decisión. La herramienta elige la forma de cada símbolo, los ordena y traza las flechas, de modo que nunca queda un símbolo suelto ni una flecha sin conectar.</p>' +

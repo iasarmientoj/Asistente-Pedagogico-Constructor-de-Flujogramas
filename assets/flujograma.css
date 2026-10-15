@@ -58,7 +58,7 @@
 #flujograma-app *::before,
 #flujograma-app *::after { box-sizing: border-box; }
 
-#flujograma-app h2, #flujograma-app h3, #flujograma-app h4,
+#flujograma-app h1, #flujograma-app h2, #flujograma-app h3, #flujograma-app h4,
 #flujograma-app p, #flujograma-app ul, #flujograma-app ol,
 #flujograma-app li, #flujograma-app label, #flujograma-app div,
 #flujograma-app span, #flujograma-app b, #flujograma-app details,
@@ -112,7 +112,7 @@
 }
 
 /* Los titulos van en Raleway, como los del sitio; el cuerpo en Lato. */
-#flujograma-app h2, #flujograma-app h3, #flujograma-app h4 { font-family: var(--fj-titulos); }
+#flujograma-app h1, #flujograma-app h2, #flujograma-app h3, #flujograma-app h4 { font-family: var(--fj-titulos); }
 
 #flujograma-app svg { max-width: 100%; height: auto; display: block; }
 #flujograma-app .fj-oculto { display: none !important; }
